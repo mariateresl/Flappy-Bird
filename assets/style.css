@@ -1,0 +1,30 @@
+body{
+color: pink;
+background: url("../assets/bg.png");
+background-size:cover;
+font-size: 14px;
+font-style: Georgia;
+font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, serif;
+}
+
+h1 {
+  color: pink;
+  font-size: 32px;
+  font-style: Georgia;
+  font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, serif;
+}
+title {
+  color: pink;
+  font-size: 16px;
+  font-style: Georgia;
+  font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, serif;
+  align:center;>title
+  }
+
+
+a{
+color: pink;
+font-size: 16 px;
+font-style: Georgia;
+font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, serif;
+}

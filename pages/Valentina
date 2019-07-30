@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Valentina</title>
+</head>
+
+<body>
+  <h1>Il gioco del fenicottero rosa!</h1>
+  <p>Benvenuta al gioco del fenicottero rosa fatto dal fenicottero verde!</p>
+
+  <ul>
+   <a href="example.html">Clicca qui per giocare</a>
+  </ul>
+
+  <ul>
+
+    </ul>
+  Come giocare:
+  <li>Premi SPAZIO per fare un salto, la freccia a destra se vuoi fare un passo verso destra.</li>
+  <li>Allontanati dalle rocce.</li>
+  <li>Se tocchi una roccia...prova di nuovo e sarai piú fortunata!</li>
+</body>
+<html>

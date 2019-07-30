@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Rosa</title>
+  <link rel="stylesheet"href="../assets/style.css"/>
+</head>
+
+<body>
+  <h1>Il compleanno del fenicottero rosa!</h1>
+  <p>Benvenuta al sito del fenicottero rosa fatto dal fenicottero verde!</p>
+  <ul>12 anni, 4 novembre 2019!</ul>
+
+ //<img src="../assets/Flamingorosa.png" />
+</body>
+<html>
