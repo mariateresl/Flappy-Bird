@@ -1,7 +1,9 @@
 // the Game object used by the phaser.io library
 
 var actions = { preload: preload, create: create, update: update };
-var game = new Phaser.Game(790, 400, Phaser.AUTO, "game", actions);
+var height = 400;
+var width = 790;
+var game = new Phaser.Game(width, height, Phaser.AUTO, "game", actions);
 // Global score variable initialised to 0.
 var score = 0;
 // Global variable to hold the text displaying the score.
@@ -11,7 +13,13 @@ var player;
 // Global pipes variable initialised to the empty array.
 var pipes = [];
 //// the interval (in seconds) at which new pipe columns are spawned
-var pipeInterval = 1.75;
+var pipeInterval = 10.0;
+var margin = 30;
+var gapSize = 200;
+var blockHeight = 50;
+var level= 1;
+var splashDisplay;
+
 // Phaser parameters:
 // - game width
 // - game height
@@ -41,8 +49,11 @@ function preload() {
  */
 function create() {
     game.stage.setBackgroundColor("#ff3385");
-    game.sound.play("music");
+    // game.sound.play("music");
     game.add.tileSprite(0, 0, 790, 400, 'mybg');
+    // player.anchor.setTo(0, 0);
+    // player.anchor.setTo(1, 1);
+
     //add welcome text
     //game.add.text(20, 20, "Benvenuta nel gioco ufficiale del fenicottero rosa!",
     //{font: "30px Arial", fill: "#FFFFFF"});
@@ -50,7 +61,12 @@ function create() {
     //labelScore = game.add.text(20, 60, "0",
     //{font: "30px Arial", fill: "#FFFFFF"});
     // initialise the player and associate it with playerImg
+
     player = game.add.sprite(80, 200, "playerImg");
+    player.anchor.setTo(0.5, 0.5);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.arcade.enable(player);
+
     // associate right arrow key with moveRight function
     //game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
     // associate left arrow key with moveLeft function
@@ -66,43 +82,78 @@ function create() {
     //game.add.text(680, 360, "morning", {font: "30px COMBAK", fill: "#FFFFFF"});
     //game.add.text(20, 20, "good", {font: "30px COMBAK", fill: "#63b5d"});
     //game.add.sprite(50,50, "playerImg");
-    //game.input.onDown.add(clickHandler);
+    game.input.onDown.add(clickHandler);
+    splashDisplay = game.add.text(100,200, "Premi INVIO per iniziare, SPAZIO per saltare");
     labelScore=game.add.text(200,20,score);
 
-    game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
-    player.anchor.setTo(0.5,0.5);
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.physics.arcade.enable(player);
-    player.body.gravity.y=100;
-    game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(playerJump);
-    var pipeInterval = 1.9 * Phaser.Timer.SECOND;
-game.time.events.loop(
- pipeInterval,
- generatePipe
-);
+    game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(start);
+    game.input.onDown.add(start);
+}
+
+function start (){
+
+  //game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
+  game.sound.play("music");
+
+  player.body.gravity.y=100;
+  game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(playerJump);
+  game.input.onDown.add(playerJump);
+  //game.input.onDown.add(playerJump);
+  var pipeInterval = 3.0 * Phaser.Timer.SECOND;
+  game.time.events.loop(
+  pipeInterval,
+  generatePipe
+  );
+  game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.remove(start);
+  game.input.onDown.remove(start);
+  splashDisplay.destroy();
 }
 /*
 /*This function updates the scene. It is called for every new frame.
  */
 function update() {
 
-  game.physics.arcade.overlap(
- player,
- pipes,
- gameOver);
+   game.physics.arcade.overlap(
+   player,
+   pipes,
+   gameOver);
 
- if (player.body.position.y > 400) {
-   player.body.position.y = 0;
- }
+   //player.rotation += 5;
+   player.rotation = Math.atan(player.body.velocity.y / 200);
 
- if (player.body.position.y < 0) {
-   player.body.position.y = 400;
- }
+   if (player.body.position.y > 400) {
+     player.body.position.y = 0;
+   }
+
+   if (player.body.position.y < 0) {
+     player.body.position.y = 400;
+   }
+if (score>1){
+  gapSize=200;
+  //level=level+1
+  levelboard=game.add.text(20,50,"Hai superato il livello 1")
+}
+if (score>15){
+  gapSize=150;
+  level=level+1
+  levelboard=game.add.text(20,50,"Hai superato il livello 2")
+}
+if (score>45){
+  gapSize=100;
+  level=level+1
+  levelboard=game.add.text(20,50,"Hai superato il livello 3")
+}
+
+if (score>60){
+  gapSize=0;
+  level=level+1
+  levelboard=game.add.text(20,50,"Game Over")
+}
 
 }
 
 function clickHandler(event){
-  game.add.text(event.x, event.y, "Hello!",{font:"30px chrome", fill: "#63b5d"});
+  //game.add.text(event.x, event.y, "Hello!",{font:"30px chrome", fill: "#63b5d"});
   game.sound.play("score");
   changeScore();
 }
@@ -145,13 +196,16 @@ function addPipeBlock(x, y) {
 }
 function generatePipe() {
  // calculate a random position for the gap
- var gap = game.rnd.integerInRange(1 ,5);
+ var gapStart = game.rnd.integerInRange(margin, height - margin - gapSize);
  // generate the pipes, except where the gap should be
- for (var count=0; count<20; count++) {
- if (count != gap && count != gap+1) {
- addPipeBlock(790, count*50);
+
+ for(var y = gapStart; y>0; y -= blockHeight){
+   addPipeBlock(width, y-blockHeight);
  }
+ for(var y = gapStart + gapSize; y < height; y += blockHeight){
+   addPipeBlock(width,y);
  }
+ changeScore()
 }
 
 function changeScore() {
@@ -162,5 +216,6 @@ function changeScore() {
 }
 
 function gameOver(){
+
  location.reload();
 }
